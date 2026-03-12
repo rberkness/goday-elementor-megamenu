@@ -4,40 +4,26 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap');
 
-/* ---------- Trigger button ---------- */
+/* ---------- Menu item trigger ---------- */
 
-.goday-mm-wrapper {
-	position: relative;
-	display: inline-block;
-	font-family: 'Heebo', sans-serif;
-}
-
-.goday-mm-trigger {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 6px 2px;
-	font-size: 17px;
-	font-weight: 500;
-	color: inherit;
-	background: none;
-	border: none;
+.goday-mm-item a {
 	cursor: pointer;
-	transition: opacity 0.2s;
-	line-height: 1;
 }
 
-.goday-mm-trigger:hover {
-	opacity: 0.8;
-}
-
-.goday-mm-trigger__chevron {
-	width: 10px;
-	height: 6px;
+.goday-mm-chevron {
+	display: inline-block;
+	margin-left: 4px;
+	vertical-align: middle;
 	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.goday-mm-trigger.is-active .goday-mm-trigger__chevron {
+.goday-mm-chevron svg {
+	width: 10px;
+	height: 6px;
+	display: block;
+}
+
+.goday-mm-item.is-active .goday-mm-chevron {
 	transform: rotate(180deg);
 }
 
@@ -50,7 +36,7 @@
 	z-index: 9998;
 }
 
-.goday-mm-wrapper.is-open .goday-mm-overlay {
+body.goday-mm-is-open .goday-mm-overlay {
 	display: block;
 }
 
@@ -70,9 +56,10 @@
 		max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
 		opacity 0.3s ease-out;
 	pointer-events: none;
+	font-family: 'Heebo', sans-serif;
 }
 
-.goday-mm-wrapper.is-open .goday-mm-panel {
+body.goday-mm-is-open .goday-mm-panel {
 	max-height: 600px;
 	opacity: 1;
 	pointer-events: auto;
@@ -107,7 +94,7 @@
 	opacity: 0;
 }
 
-.goday-mm-wrapper.is-open .goday-mm-divider {
+body.goday-mm-is-open .goday-mm-divider {
 	animation: godayDividerGrow 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -124,7 +111,7 @@
 	transform: translateY(18px) scale(0.97);
 }
 
-.goday-mm-wrapper.is-open .goday-mm-card {
+body.goday-mm-is-open .goday-mm-card {
 	animation: godaySlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -152,7 +139,7 @@
 	transform: translateY(10px);
 }
 
-.goday-mm-wrapper.is-open .goday-mm-card__text {
+body.goday-mm-is-open .goday-mm-card__text {
 	animation: godayFadeIn 0.35s ease-out forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -179,7 +166,7 @@
 	transform: translateY(10px);
 }
 
-.goday-mm-wrapper.is-open .goday-mm-info {
+body.goday-mm-is-open .goday-mm-info {
 	animation: godayFadeIn 0.35s ease-out forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -238,7 +225,7 @@
 	transform: translateX(12px);
 }
 
-.goday-mm-wrapper.is-open .goday-mm-link {
+body.goday-mm-is-open .goday-mm-link {
 	animation: godaySlideInRight 0.3s ease-out forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -272,7 +259,7 @@
 	transform: translateY(10px);
 }
 
-.goday-mm-wrapper.is-open .goday-mm-snippet {
+body.goday-mm-is-open .goday-mm-snippet {
 	animation: godayFadeIn 0.35s ease-out forwards;
 	animation-delay: var(--delay, 0s);
 }
@@ -333,25 +320,28 @@
 }
 
 /* ==========================================================================
-   Close / Reset animations when panel closes
+   Reset animations when panel is closed
    ========================================================================== */
 
-.goday-mm-wrapper:not(.is-open) .goday-mm-card,
-.goday-mm-wrapper:not(.is-open) .goday-mm-card__text,
-.goday-mm-wrapper:not(.is-open) .goday-mm-info,
-.goday-mm-wrapper:not(.is-open) .goday-mm-divider,
-.goday-mm-wrapper:not(.is-open) .goday-mm-link,
-.goday-mm-wrapper:not(.is-open) .goday-mm-snippet {
+body:not(.goday-mm-is-open) .goday-mm-card,
+body:not(.goday-mm-is-open) .goday-mm-card__text,
+body:not(.goday-mm-is-open) .goday-mm-info,
+body:not(.goday-mm-is-open) .goday-mm-divider,
+body:not(.goday-mm-is-open) .goday-mm-link,
+body:not(.goday-mm-is-open) .goday-mm-snippet {
 	animation: none;
 	opacity: 0;
 }
 
 /* ==========================================================================
-   Responsive — hide mega menu on mobile, show simplified version
+   Responsive — hide mega menu panel on smaller screens
    ========================================================================== */
 
 @media (max-width: 1024px) {
 	.goday-mm-panel {
 		display: none !important;
+	}
+	.goday-mm-chevron {
+		display: none;
 	}
 }

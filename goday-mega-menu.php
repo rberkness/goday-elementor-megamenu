@@ -2,14 +2,12 @@
 /**
  * Plugin Name: GO Day Mega Menu
  * Plugin URI:  https://goday.world
- * Description: Elementor widget that adds the GO Day mega menu dropdown to your site header.
+ * Description: Adds a GO Day mega menu dropdown to any WordPress nav menu item. Create a Custom Link menu item with URL "#goday-mega-menu" and the plugin handles the rest.
  * Version:     1.0.0
  * Author:      GO Movement
  * Author URI:  https://gomovement.world
  * License:     GPL-2.0-or-later
  * Text Domain: goday-mega-menu
- * Requires Plugins: elementor
- * Elementor tested up to: 3.25.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,76 +19,158 @@ define( 'GODAY_MEGA_MENU_URL', plugin_dir_url( __FILE__ ) );
 define( 'GODAY_MEGA_MENU_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
- * Initialize the plugin after all plugins are loaded.
+ * Enqueue frontend CSS and JS on every page.
  */
-function goday_mega_menu_init() {
-
-	// Bail if Elementor is not loaded.
-	if ( ! did_action( 'elementor/loaded' ) ) {
-		add_action( 'admin_notices', 'goday_mega_menu_missing_elementor_notice' );
-		return;
-	}
-
-	// Register the widget.
-	add_action( 'elementor/widgets/register', 'goday_mega_menu_register_widgets' );
-
-	// Register frontend assets (lazy-loaded per widget).
-	add_action( 'elementor/frontend/after_register_scripts', 'goday_mega_menu_register_scripts' );
-	add_action( 'elementor/frontend/after_register_styles', 'goday_mega_menu_register_styles' );
-
-	// Register custom widget category.
-	add_action( 'elementor/elements/categories_registered', 'goday_mega_menu_register_categories' );
-}
-add_action( 'plugins_loaded', 'goday_mega_menu_init' );
-
-/**
- * Admin notice when Elementor is missing.
- */
-function goday_mega_menu_missing_elementor_notice() {
-	echo '<div class="notice notice-warning is-dismissible"><p>';
-	echo esc_html__( 'GO Day Mega Menu requires Elementor to be installed and activated.', 'goday-mega-menu' );
-	echo '</p></div>';
-}
-
-/**
- * Register the Elementor widget.
- */
-function goday_mega_menu_register_widgets( $widgets_manager ) {
-	require_once GODAY_MEGA_MENU_PATH . 'widgets/class-goday-mega-menu-widget.php';
-	$widgets_manager->register( new \GoDayMegaMenu\Widgets\GoDayMegaMenuWidget() );
-}
-
-/**
- * Register frontend JavaScript.
- */
-function goday_mega_menu_register_scripts() {
-	wp_register_script(
+add_action( 'wp_enqueue_scripts', function () {
+	wp_enqueue_style(
+		'goday-mega-menu',
+		GODAY_MEGA_MENU_URL . 'assets/css/goday-mega-menu.css',
+		[],
+		GODAY_MEGA_MENU_VERSION
+	);
+	wp_enqueue_script(
 		'goday-mega-menu',
 		GODAY_MEGA_MENU_URL . 'assets/js/goday-mega-menu.js',
 		[],
 		GODAY_MEGA_MENU_VERSION,
 		true
 	);
-}
+} );
 
 /**
- * Register frontend CSS.
+ * Mark the target menu item.
+ *
+ * When a menu item has URL "#goday-mega-menu", add a CSS class so the
+ * frontend JS can find it, and neutralize the link href.
  */
-function goday_mega_menu_register_styles() {
-	wp_register_style(
-		'goday-mega-menu',
-		GODAY_MEGA_MENU_URL . 'assets/css/goday-mega-menu.css',
-		[],
-		GODAY_MEGA_MENU_VERSION
-	);
-}
+add_filter( 'wp_nav_menu_objects', function ( $items ) {
+	foreach ( $items as $item ) {
+		if ( $item->url === '#goday-mega-menu' ) {
+			$item->classes[] = 'goday-mm-item';
+			$item->url       = '#';
+		}
+	}
+	return $items;
+} );
 
 /**
- * Register custom Elementor widget category.
+ * Output the mega menu panel HTML in the footer.
+ *
+ * Hidden by default — JS positions and reveals it when the trigger
+ * menu item is hovered or clicked.
  */
-function goday_mega_menu_register_categories( $elements_manager ) {
-	$elements_manager->add_category( 'goday', [
-		'title' => __( 'GO Day', 'goday-mega-menu' ),
-		'icon'  => 'fa fa-globe',
-	] );
+add_action( 'wp_footer', function () {
+	$img_base = esc_url( GODAY_MEGA_MENU_URL . 'assets/images/' );
+	?>
+	<!-- GO Day Mega Menu Panel -->
+	<div id="goday-mm-panel" class="goday-mm-panel" aria-hidden="true">
+		<div class="goday-mm-grid">
+
+			<!-- Column 1: Come Join Us -->
+			<div class="goday-mm-col goday-mm-col--1">
+				<div class="goday-mm-card" style="--delay: 0.05s">
+					<img src="<?php echo $img_base; ?>hero-bg.webp"
+					     alt="Come join us for GO Day"
+					     class="goday-mm-card__img"
+					     loading="lazy" />
+					<div class="goday-mm-card__overlay"></div>
+					<div class="goday-mm-card__text" style="--delay: 0.15s">
+						<h3 class="goday-mm-card__title">Come Join Us</h3>
+						<p class="goday-mm-card__sub">A Global Event</p>
+					</div>
+				</div>
+				<div class="goday-mm-info" style="--delay: 0.2s">
+					<?php goday_mega_menu_render_logo(); ?>
+					<p class="goday-mm-info__headline">Share Jesus with One Person</p>
+					<p class="goday-mm-info__date">
+						<span class="goday-mm-info__red">Pentecost Saturday</span> &ndash; Saturday, May 23, 2026
+					</p>
+				</div>
+			</div>
+
+			<!-- Divider 1 -->
+			<div class="goday-mm-divider" style="--delay: 0.08s" aria-hidden="true"></div>
+
+			<!-- Column 2: Leaders & Pastors -->
+			<div class="goday-mm-col goday-mm-col--2">
+				<div class="goday-mm-card" style="--delay: 0.12s">
+					<img src="<?php echo $img_base; ?>youth-leader.jpg"
+					     alt="Leaders and Pastors"
+					     class="goday-mm-card__img"
+					     loading="lazy" />
+					<div class="goday-mm-card__overlay"></div>
+					<div class="goday-mm-card__text" style="--delay: 0.22s">
+						<h3 class="goday-mm-card__title">Leaders &amp; Pastors</h3>
+						<p class="goday-mm-card__sub">We Want to Support You</p>
+					</div>
+				</div>
+				<div class="goday-mm-info" style="--delay: 0.28s">
+					<?php goday_mega_menu_render_logo(); ?>
+					<p class="goday-mm-info__headline">Leaders &amp; Pastors</p>
+					<p class="goday-mm-info__soon">Coming soon</p>
+				</div>
+			</div>
+
+			<!-- Divider 2 -->
+			<div class="goday-mm-divider" style="--delay: 0.08s" aria-hidden="true"></div>
+
+			<!-- Column 3: Quick Links -->
+			<div class="goday-mm-col goday-mm-col--3">
+				<div class="goday-mm-links">
+					<button class="goday-mm-link" data-action="calendar" style="--delay: 0.18s">
+						<h4 class="goday-mm-link__title">Set Your Calendar</h4>
+						<p class="goday-mm-link__sub">May 23, 2026</p>
+					</button>
+					<a href="https://goday.world" target="_blank" rel="noopener noreferrer"
+					   class="goday-mm-link" style="--delay: 0.24s">
+						<h4 class="goday-mm-link__title">Invite a Friend</h4>
+						<p class="goday-mm-link__sub">Bring several if you can</p>
+					</a>
+					<a href="https://gomovement.world/who-we-are" target="_blank" rel="noopener noreferrer"
+					   class="goday-mm-link" style="--delay: 0.3s">
+						<h4 class="goday-mm-link__title">Who We Are</h4>
+						<p class="goday-mm-link__sub">Mobilizing Christians to share their faith globally</p>
+					</a>
+					<a href="https://gomovement.world/news-stories" target="_blank" rel="noopener noreferrer"
+					   class="goday-mm-link" style="--delay: 0.36s">
+						<h4 class="goday-mm-link__title">News &amp; Stories</h4>
+						<p class="goday-mm-link__sub">Testimonies and updates from around the world</p>
+					</a>
+					<a href="https://gomovement.world/resources" target="_blank" rel="noopener noreferrer"
+					   class="goday-mm-link" style="--delay: 0.42s">
+						<h4 class="goday-mm-link__title">Resources</h4>
+						<p class="goday-mm-link__sub">Tools and guides to help you share your faith</p>
+					</a>
+				</div>
+				<div class="goday-mm-snippet" style="--delay: 0.45s">
+					<p>GO Day is a global movement where millions of believers share the love
+					and message of Jesus with one person through a simple conversation.</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- GO Day Mega Menu Overlay -->
+	<div id="goday-mm-overlay" class="goday-mm-overlay" aria-hidden="true"></div>
+	<?php
+} );
+
+/**
+ * Render the inline GO DAY logo SVG.
+ */
+function goday_mega_menu_render_logo() {
+	?>
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 364.74 74.42" class="goday-mm-logo" aria-label="GO Day" role="img">
+		<g fill="#D90000">
+			<path d="M35.37,59.69c-2.04-.34-4.08-.59-6.05-1.26-19.7-6.72-18.13-38.28,2.25-43.17,8.06-1.93,17.88-.47,22.63,6.75.99,1.51,1.59,3.01,2.38,4.61h16c-2.36-13.12-12.96-22.63-25.7-25.56C25.68-3.82,4.4,8.52.65,30.33c-2.11,12.28.84,24.48,9.86,33.26,4.43.05,8.97.05,13.38-.59,3.93-.57,7.87-1.66,11.48-3.3Z"/>
+			<path d="M73.4,32.96h-37.37v13.5c.12.04,20.96,0,20.96,0-4.03,10.68-14.17,17.79-24.83,20.91-4.46,1.31-9.04,1.95-13.68,2.24,12.27,6.88,29.95,7.01,40.16-3.59.04-.04.07-.08.11-.12l2.14-2.7.81,9.59h11.7v-39.81Z"/>
+			<path d="M112.95.02c-33.2-.05-49.88,40.05-26.51,63.42,13.95,13.95,36.97,14.61,51.58,1.28C163.21,41.74,146.98.07,112.95.02ZM118.9,59.23c-22.73,6.19-36.84-22.23-21.22-38.51,10.27-10.71,27.67-7.6,34.43,5.42,6.38,12.3.59,29.33-13.21,33.09Z"/>
+		</g>
+		<g fill="currentColor">
+			<path d="M237.99,35.65c0-7.05-1.55-13.24-4.65-18.57-3.1-5.33-7.38-9.49-12.84-12.49C215.05,1.6,208.73.1,201.55.1h-24.59v74.22h24.46c7.22,0,13.57-1.49,19.05-4.46,5.48-2.97,9.77-7.14,12.87-12.49,3.1-5.35,4.65-11.53,4.65-18.54v-3.19ZM221.62,38.84c0,4.84-.69,8.93-2.07,12.26-1.38,3.33-3.56,5.85-6.53,7.55-2.97,1.7-6.84,2.55-11.59,2.55h-8.09V13.29h8.22c4.67,0,8.48.84,11.44,2.52,2.95,1.68,5.13,4.16,6.53,7.45,1.4,3.29,2.1,7.38,2.1,12.26v3.31Z"/>
+			<path d="M276.63.1h-11.02l-29.75,74.22h16.44l5.81-15.35h30.14l5.84,15.35h16.44L280.84.1h-4.21ZM262.74,46.74l10.39-27.46,10.46,27.46h-20.85Z"/>
+			<polygon points="364.74 .1 346.9 .1 330.19 33.28 313.52 .1 295.68 .1 321.8 47.65 321.8 74.32 338.18 74.32 338.18 48.35 364.74 .1"/>
+		</g>
+	</svg>
+	<?php
 }

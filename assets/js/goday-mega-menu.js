@@ -1,13 +1,14 @@
 /**
  * GO Day Mega Menu — Frontend Interactions
  *
- * Handles hover/click toggle, .ics calendar download,
- * scroll/escape/click-outside close, and Elementor editor compatibility.
+ * Finds the nav menu item marked with .goday-mm-item (via WP filter on
+ * items with URL "#goday-mega-menu") and attaches the mega menu panel
+ * that is output in wp_footer.
  */
 (function () {
 	"use strict";
 
-	var CLOSE_DELAY = 200; // ms before menu closes on mouseleave
+	var CLOSE_DELAY = 200;
 
 	/**
 	 * Generate and trigger download of an .ics calendar file.
@@ -42,18 +43,50 @@
 		URL.revokeObjectURL(url);
 	}
 
-	/**
-	 * Initialize one instance of the mega menu widget.
-	 */
-	function initWidget(root) {
-		var trigger = root.querySelector(".goday-mm-trigger");
-		var panel = root.querySelector(".goday-mm-panel");
-		var overlay = root.querySelector(".goday-mm-overlay");
+	function init() {
+		// Find the menu <li> that the PHP filter marked with .goday-mm-item
+		var menuItem = document.querySelector(".goday-mm-item");
+		if (!menuItem) return;
+
+		var trigger = menuItem.querySelector("a");
+		var panel = document.getElementById("goday-mm-panel");
+		var overlay = document.getElementById("goday-mm-overlay");
 
 		if (!trigger || !panel) return;
 
+		// Prevent the "#" link from scrolling to top
+		trigger.addEventListener("click", function (e) {
+			e.preventDefault();
+		});
+
+		// Add a chevron to the trigger link
+		var chevron = document.createElement("span");
+		chevron.className = "goday-mm-chevron";
+		chevron.innerHTML =
+			'<svg width="10" height="6" viewBox="0 0 10 6" fill="none">' +
+			'<path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+			"</svg>";
+		trigger.appendChild(chevron);
+
 		var closeTimer = null;
 		var isOpen = false;
+
+		function positionPanel() {
+			// Position panel directly below the header/nav bar
+			var headerEl =
+				menuItem.closest("header") ||
+				menuItem.closest(".elementor-location-header") ||
+				menuItem.closest("[data-elementor-type='header']") ||
+				menuItem.closest("nav");
+
+			if (headerEl) {
+				var rect = headerEl.getBoundingClientRect();
+				panel.style.top = rect.bottom + "px";
+			} else {
+				var triggerRect = trigger.getBoundingClientRect();
+				panel.style.top = triggerRect.bottom + 8 + "px";
+			}
+		}
 
 		function open() {
 			if (closeTimer) {
@@ -63,22 +96,9 @@
 			if (isOpen) return;
 			isOpen = true;
 
-			// Position the panel below the site header
-			var headerEl =
-				root.closest("header") ||
-				root.closest(".elementor-location-header") ||
-				root.closest("[data-elementor-type='header']");
-
-			if (headerEl) {
-				var rect = headerEl.getBoundingClientRect();
-				panel.style.top = rect.bottom + "px";
-			} else {
-				var triggerRect = trigger.getBoundingClientRect();
-				panel.style.top = triggerRect.bottom + 8 + "px";
-			}
-
-			root.classList.add("is-open");
-			trigger.classList.add("is-active");
+			positionPanel();
+			document.body.classList.add("goday-mm-is-open");
+			menuItem.classList.add("is-active");
 			trigger.setAttribute("aria-expanded", "true");
 			panel.setAttribute("aria-hidden", "false");
 		}
@@ -86,8 +106,8 @@
 		function close() {
 			if (!isOpen) return;
 			isOpen = false;
-			root.classList.remove("is-open");
-			trigger.classList.remove("is-active");
+			document.body.classList.remove("goday-mm-is-open");
+			menuItem.classList.remove("is-active");
 			trigger.setAttribute("aria-expanded", "false");
 			panel.setAttribute("aria-hidden", "true");
 		}
@@ -104,54 +124,47 @@
 			}
 		}
 
-		// --- Hover behavior (desktop) ---
-		trigger.addEventListener("mouseenter", open);
-		trigger.addEventListener("mouseleave", scheduleClose);
-		panel.addEventListener("mouseenter", function () {
-			cancelClose();
-		});
+		// --- Hover (desktop) ---
+		menuItem.addEventListener("mouseenter", open);
+		menuItem.addEventListener("mouseleave", scheduleClose);
+		panel.addEventListener("mouseenter", cancelClose);
 		panel.addEventListener("mouseleave", scheduleClose);
 
-		// --- Click toggle (accessibility + mobile) ---
+		// --- Click toggle ---
 		trigger.addEventListener("click", function (e) {
 			e.preventDefault();
-			if (isOpen) {
-				close();
-			} else {
-				open();
-			}
+			if (isOpen) close();
+			else open();
 		});
 
-		// --- Click-away overlay ---
+		// --- Overlay click-away ---
 		if (overlay) {
 			overlay.addEventListener("click", close);
 		}
 
 		// --- Escape key ---
 		document.addEventListener("keydown", function (e) {
-			if (e.key === "Escape" && isOpen) {
-				close();
-			}
+			if (e.key === "Escape" && isOpen) close();
 		});
 
 		// --- Scroll close ---
-		var scrolling = false;
+		var ticking = false;
 		window.addEventListener(
 			"scroll",
 			function () {
-				if (isOpen && !scrolling) {
-					scrolling = true;
+				if (isOpen && !ticking) {
+					ticking = true;
 					requestAnimationFrame(function () {
 						close();
-						scrolling = false;
+						ticking = false;
 					});
 				}
 			},
 			{ passive: true }
 		);
 
-		// --- Calendar download button ---
-		var calBtn = root.querySelector('[data-action="calendar"]');
+		// --- Calendar download ---
+		var calBtn = panel.querySelector('[data-action="calendar"]');
 		if (calBtn) {
 			calBtn.addEventListener("click", function (e) {
 				e.preventDefault();
@@ -160,37 +173,23 @@
 			});
 		}
 
-		// --- Close on link click ---
+		// --- Close panel on link click ---
 		var links = panel.querySelectorAll("a.goday-mm-link");
 		for (var i = 0; i < links.length; i++) {
 			links[i].addEventListener("click", function () {
-				// Let the link navigate, but close menu
 				setTimeout(close, 100);
 			});
 		}
+
+		// Mark as initialized
+		menuItem.setAttribute("aria-haspopup", "true");
+		trigger.setAttribute("aria-expanded", "false");
 	}
 
-	// --- Elementor frontend hook ---
-	if (typeof jQuery !== "undefined" && typeof elementorFrontend !== "undefined") {
-		jQuery(window).on("elementor/frontend/init", function () {
-			elementorFrontend.hooks.addAction(
-				"frontend/element_ready/goday-mega-menu.default",
-				function ($scope) {
-					initWidget($scope[0]);
-				}
-			);
-		});
+	// Initialize on DOM ready
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", init);
+	} else {
+		init();
 	}
-
-	// --- Fallback: init on DOMContentLoaded if outside Elementor ---
-	document.addEventListener("DOMContentLoaded", function () {
-		var widgets = document.querySelectorAll(".goday-mm-wrapper");
-		for (var i = 0; i < widgets.length; i++) {
-			// Only init if Elementor didn't already handle it
-			if (!widgets[i].dataset.godayMmInit) {
-				widgets[i].dataset.godayMmInit = "1";
-				initWidget(widgets[i]);
-			}
-		}
-	});
 })();
