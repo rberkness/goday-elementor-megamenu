@@ -1,0 +1,357 @@
+/* ==========================================================================
+   GO Day Mega Menu — Styles & Animations
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap');
+
+/* ---------- Trigger button ---------- */
+
+.goday-mm-wrapper {
+	position: relative;
+	display: inline-block;
+	font-family: 'Heebo', sans-serif;
+}
+
+.goday-mm-trigger {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 2px;
+	font-size: 17px;
+	font-weight: 500;
+	color: inherit;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: opacity 0.2s;
+	line-height: 1;
+}
+
+.goday-mm-trigger:hover {
+	opacity: 0.8;
+}
+
+.goday-mm-trigger__chevron {
+	width: 10px;
+	height: 6px;
+	transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.goday-mm-trigger.is-active .goday-mm-trigger__chevron {
+	transform: rotate(180deg);
+}
+
+/* ---------- Click-away overlay ---------- */
+
+.goday-mm-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	z-index: 9998;
+}
+
+.goday-mm-wrapper.is-open .goday-mm-overlay {
+	display: block;
+}
+
+/* ---------- Panel ---------- */
+
+.goday-mm-panel {
+	position: fixed;
+	left: 0;
+	right: 0;
+	z-index: 9999;
+	background: #f8f6f3;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition:
+		max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+		opacity 0.3s ease-out;
+	pointer-events: none;
+}
+
+.goday-mm-wrapper.is-open .goday-mm-panel {
+	max-height: 600px;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* ---------- Grid layout ---------- */
+
+.goday-mm-grid {
+	display: grid;
+	grid-template-columns: 1fr 1px 1fr 1px 280px;
+	gap: 0;
+	padding: 32px;
+	max-width: 1280px;
+	margin: 0 auto;
+}
+
+.goday-mm-col--1,
+.goday-mm-col--2 {
+	padding: 0 32px;
+}
+
+.goday-mm-col--3 {
+	padding-left: 32px;
+}
+
+/* ---------- Dividers ---------- */
+
+.goday-mm-divider {
+	background: rgba(209, 213, 219, 0.8);
+	transform-origin: top center;
+	transform: scaleY(0);
+	opacity: 0;
+}
+
+.goday-mm-wrapper.is-open .goday-mm-divider {
+	animation: godayDividerGrow 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+/* ---------- Image cards ---------- */
+
+.goday-mm-card {
+	position: relative;
+	border-radius: 16px;
+	overflow: hidden;
+	aspect-ratio: 5 / 3;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+	opacity: 0;
+	transform: translateY(18px) scale(0.97);
+}
+
+.goday-mm-wrapper.is-open .goday-mm-card {
+	animation: godaySlideUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+.goday-mm-card__img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.goday-mm-card__overlay {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.2) 50%, transparent);
+}
+
+.goday-mm-card__text {
+	position: absolute;
+	bottom: 16px;
+	left: 20px;
+	right: 20px;
+	opacity: 0;
+	transform: translateY(10px);
+}
+
+.goday-mm-wrapper.is-open .goday-mm-card__text {
+	animation: godayFadeIn 0.35s ease-out forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+.goday-mm-card__title {
+	font-size: 20px;
+	font-weight: 900;
+	color: #fff;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.goday-mm-card__sub {
+	font-size: 14px;
+	color: rgba(255, 255, 255, 0.8);
+	margin: 2px 0 0;
+}
+
+/* ---------- Info below cards ---------- */
+
+.goday-mm-info {
+	margin-top: 16px;
+	opacity: 0;
+	transform: translateY(10px);
+}
+
+.goday-mm-wrapper.is-open .goday-mm-info {
+	animation: godayFadeIn 0.35s ease-out forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+.goday-mm-logo {
+	height: 28px;
+	width: auto;
+	color: #111827;
+}
+
+.goday-mm-info__headline {
+	margin: 8px 0 0;
+	font-size: 16px;
+	font-weight: 700;
+	color: #111827;
+}
+
+.goday-mm-info__date {
+	margin: 2px 0 0;
+	font-size: 14px;
+	color: #4b5563;
+}
+
+.goday-mm-info__red {
+	font-weight: 600;
+	color: #FF0000;
+}
+
+.goday-mm-info__soon {
+	margin: 4px 0 0;
+	font-size: 14px;
+	color: #9ca3af;
+	font-style: italic;
+}
+
+/* ---------- Quick links ---------- */
+
+.goday-mm-links {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.goday-mm-link {
+	display: block;
+	text-align: left;
+	text-decoration: none;
+	border-radius: 8px;
+	margin: 0 -8px;
+	padding: 6px 8px;
+	background: none;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	opacity: 0;
+	transform: translateX(12px);
+}
+
+.goday-mm-wrapper.is-open .goday-mm-link {
+	animation: godaySlideInRight 0.3s ease-out forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+.goday-mm-link:hover {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.goday-mm-link__title {
+	font-size: 15px;
+	font-weight: 700;
+	color: #111827;
+	line-height: 1.2;
+	margin: 0;
+}
+
+.goday-mm-link__sub {
+	font-size: 12px;
+	color: #6b7280;
+	margin: 2px 0 0;
+	line-height: 1.4;
+}
+
+/* ---------- Snippet ---------- */
+
+.goday-mm-snippet {
+	margin-top: 20px;
+	padding-top: 16px;
+	border-top: 1px solid rgba(209, 213, 219, 0.8);
+	opacity: 0;
+	transform: translateY(10px);
+}
+
+.goday-mm-wrapper.is-open .goday-mm-snippet {
+	animation: godayFadeIn 0.35s ease-out forwards;
+	animation-delay: var(--delay, 0s);
+}
+
+.goday-mm-snippet p {
+	font-size: 12px;
+	color: #6b7280;
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* ==========================================================================
+   Keyframe Animations
+   ========================================================================== */
+
+@keyframes godaySlideUp {
+	from {
+		opacity: 0;
+		transform: translateY(18px) scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes godayFadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes godaySlideInRight {
+	from {
+		opacity: 0;
+		transform: translateX(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@keyframes godayDividerGrow {
+	from {
+		opacity: 0;
+		transform: scaleY(0);
+	}
+	to {
+		opacity: 1;
+		transform: scaleY(1);
+	}
+}
+
+/* ==========================================================================
+   Close / Reset animations when panel closes
+   ========================================================================== */
+
+.goday-mm-wrapper:not(.is-open) .goday-mm-card,
+.goday-mm-wrapper:not(.is-open) .goday-mm-card__text,
+.goday-mm-wrapper:not(.is-open) .goday-mm-info,
+.goday-mm-wrapper:not(.is-open) .goday-mm-divider,
+.goday-mm-wrapper:not(.is-open) .goday-mm-link,
+.goday-mm-wrapper:not(.is-open) .goday-mm-snippet {
+	animation: none;
+	opacity: 0;
+}
+
+/* ==========================================================================
+   Responsive — hide mega menu on mobile, show simplified version
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+	.goday-mm-panel {
+		display: none !important;
+	}
+}
