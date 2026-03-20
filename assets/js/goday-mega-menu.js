@@ -3,12 +3,13 @@
  *
  * Finds the nav menu item with href "#goday-mega-menu" and attaches the
  * mega menu panel. Works with standard WordPress menus (via PHP filter)
- * and Elementor Menu widgets (via JS fallback detection).
+ * and Elementor Menu widgets (via JS detection + capture-phase click).
  */
 (function () {
 	"use strict";
 
 	var CLOSE_DELAY = 200;
+	var initialized = false;
 
 	/**
 	 * Generate and trigger download of an .ics calendar file (Apple Calendar).
@@ -85,34 +86,76 @@
 		yahoo: function () { window.open(getYahooUrl(), "_blank"); },
 	};
 
+	// --- Capture-phase click handler ---
+	// Registered on the document IMMEDIATELY so it fires before Elementor's
+	// handlers, even if Elementor hasn't rendered the menu yet.
+	document.addEventListener("click", function (e) {
+		var link = e.target.closest('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"], .goday-mm-item a');
+		if (!link) return;
+		e.preventDefault();
+		e.stopImmediatePropagation();
+
+		// If not yet initialized, try now
+		if (!initialized) init();
+		if (!initialized) return;
+
+		// Toggle
+		if (isOpen) close();
+		else open();
+	}, true); // <-- capture phase
+
+	var panel = null;
+	var overlay = null;
+	var menuItem = null;
+	var trigger = null;
+	var closeTimer = null;
+	var isOpen = false;
+
 	function init() {
+		if (initialized) return true;
+
+		console.log("[GO Day MM] init() running...");
+
 		// First try the PHP-marked class (standard WP menus)
-		var menuItem = document.querySelector(".goday-mm-item");
-		var trigger;
+		menuItem = document.querySelector(".goday-mm-item");
 
 		if (menuItem) {
+			console.log("[GO Day MM] Found .goday-mm-item (WP menu)");
 			trigger = menuItem.querySelector("a");
 		} else {
 			// Fallback: find any link pointing to #goday-mega-menu (Elementor, etc.)
 			trigger = document.querySelector('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"]');
+			console.log("[GO Day MM] Fallback search result:", trigger);
 			if (trigger) {
 				menuItem = trigger.closest("li") || trigger.parentElement;
 				menuItem.classList.add("goday-mm-item");
+
+				// Remove Elementor's anchor class so it stops treating this as a scroll link
+				var anchorParent = trigger.closest(".e-anchor");
+				if (anchorParent) {
+					anchorParent.classList.remove("e-anchor");
+				}
+
+				console.log("[GO Day MM] menuItem:", menuItem.tagName, menuItem.className);
 			}
 		}
 
-		if (!menuItem || !trigger) return;
+		if (!menuItem || !trigger) {
+			console.log("[GO Day MM] No trigger found, will retry...");
+			return false;
+		}
 
-		var panel = document.getElementById("goday-mm-panel");
-		var overlay = document.getElementById("goday-mm-overlay");
+		panel = document.getElementById("goday-mm-panel");
+		overlay = document.getElementById("goday-mm-overlay");
 
-		if (!panel) return;
+		console.log("[GO Day MM] panel:", panel, "overlay:", overlay);
+		if (!panel) {
+			console.log("[GO Day MM] No panel found!");
+			return false;
+		}
 
-		// Neutralize the anchor link so it doesn't navigate
+		// Neutralize the anchor link
 		trigger.setAttribute("href", "#");
-		trigger.addEventListener("click", function (e) {
-			e.preventDefault();
-		});
 
 		// Add a chevron to the trigger link
 		var chevron = document.createElement("span");
@@ -123,74 +166,11 @@
 			"</svg>";
 		trigger.appendChild(chevron);
 
-		var closeTimer = null;
-		var isOpen = false;
-
-		function positionPanel() {
-			// Position panel directly below the header/nav bar
-			var headerEl =
-				menuItem.closest("header") ||
-				menuItem.closest(".elementor-location-header") ||
-				menuItem.closest("[data-elementor-type='header']") ||
-				menuItem.closest("nav");
-
-			if (headerEl) {
-				var rect = headerEl.getBoundingClientRect();
-				panel.style.top = rect.bottom + "px";
-			} else {
-				var triggerRect = trigger.getBoundingClientRect();
-				panel.style.top = triggerRect.bottom + 8 + "px";
-			}
-		}
-
-		function open() {
-			if (closeTimer) {
-				clearTimeout(closeTimer);
-				closeTimer = null;
-			}
-			if (isOpen) return;
-			isOpen = true;
-
-			positionPanel();
-			document.body.classList.add("goday-mm-is-open");
-			menuItem.classList.add("is-active");
-			trigger.setAttribute("aria-expanded", "true");
-			panel.setAttribute("aria-hidden", "false");
-		}
-
-		function close() {
-			if (!isOpen) return;
-			isOpen = false;
-			document.body.classList.remove("goday-mm-is-open");
-			menuItem.classList.remove("is-active");
-			trigger.setAttribute("aria-expanded", "false");
-			panel.setAttribute("aria-hidden", "true");
-		}
-
-		function scheduleClose() {
-			if (closeTimer) clearTimeout(closeTimer);
-			closeTimer = setTimeout(close, CLOSE_DELAY);
-		}
-
-		function cancelClose() {
-			if (closeTimer) {
-				clearTimeout(closeTimer);
-				closeTimer = null;
-			}
-		}
-
 		// --- Hover (desktop) ---
 		menuItem.addEventListener("mouseenter", open);
 		menuItem.addEventListener("mouseleave", scheduleClose);
 		panel.addEventListener("mouseenter", cancelClose);
 		panel.addEventListener("mouseleave", scheduleClose);
-
-		// --- Click toggle ---
-		trigger.addEventListener("click", function (e) {
-			e.preventDefault();
-			if (isOpen) close();
-			else open();
-		});
 
 		// --- Overlay click-away ---
 		if (overlay) {
@@ -245,15 +225,6 @@
 			}
 		}
 
-		// Close calendar dropdown when mega menu closes
-		var origClose = close;
-		close = function () {
-			if (calDropdown) {
-				calDropdown.setAttribute("aria-hidden", "true");
-			}
-			origClose();
-		};
-
 		// --- Close panel on link click ---
 		var links = panel.querySelectorAll("a.goday-mm-link");
 		for (var i = 0; i < links.length; i++) {
@@ -265,12 +236,83 @@
 		// Mark as initialized
 		menuItem.setAttribute("aria-haspopup", "true");
 		trigger.setAttribute("aria-expanded", "false");
+		initialized = true;
+		console.log("[GO Day MM] Initialized successfully!");
+		return true;
 	}
 
-	// Initialize on DOM ready
+	function positionPanel() {
+		if (!menuItem || !panel) return;
+		var headerEl =
+			menuItem.closest("header") ||
+			menuItem.closest(".elementor-location-header") ||
+			menuItem.closest("[data-elementor-type='header']") ||
+			menuItem.closest("nav");
+
+		if (headerEl) {
+			var rect = headerEl.getBoundingClientRect();
+			panel.style.top = rect.bottom + "px";
+		} else {
+			var triggerRect = trigger.getBoundingClientRect();
+			panel.style.top = triggerRect.bottom + 8 + "px";
+		}
+	}
+
+	function open() {
+		if (closeTimer) {
+			clearTimeout(closeTimer);
+			closeTimer = null;
+		}
+		if (isOpen) return;
+		isOpen = true;
+
+		positionPanel();
+		document.body.classList.add("goday-mm-is-open");
+		menuItem.classList.add("is-active");
+		trigger.setAttribute("aria-expanded", "true");
+		panel.setAttribute("aria-hidden", "false");
+	}
+
+	function close() {
+		if (!isOpen) return;
+		isOpen = false;
+		document.body.classList.remove("goday-mm-is-open");
+		menuItem.classList.remove("is-active");
+		trigger.setAttribute("aria-expanded", "false");
+		panel.setAttribute("aria-hidden", "true");
+
+		// Also close calendar dropdown
+		if (panel) {
+			var calDropdown = panel.querySelector('.goday-mm-cal-dropdown');
+			if (calDropdown) {
+				calDropdown.setAttribute("aria-hidden", "true");
+			}
+		}
+	}
+
+	function scheduleClose() {
+		if (closeTimer) clearTimeout(closeTimer);
+		closeTimer = setTimeout(close, CLOSE_DELAY);
+	}
+
+	function cancelClose() {
+		if (closeTimer) {
+			clearTimeout(closeTimer);
+			closeTimer = null;
+		}
+	}
+
+	// Retry init until Elementor renders the menu
+	function tryInit(attempts) {
+		if (init()) return;
+		if (attempts > 0) {
+			setTimeout(function () { tryInit(attempts - 1); }, 300);
+		}
+	}
+
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", init);
+		document.addEventListener("DOMContentLoaded", function () { tryInit(30); });
 	} else {
-		init();
+		tryInit(30);
 	}
 })();

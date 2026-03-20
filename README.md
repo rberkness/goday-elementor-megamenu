@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.1.0
+**Version:** 1.2.0
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,17 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.2.0
+- Rewrite JS to use capture-phase click handler — intercepts clicks before Elementor's anchor handling
+- Remove Elementor's e-anchor class from trigger to prevent scroll behavior
+- Increase retry attempts for late-rendering Elementor widgets
+
+### 1.1.2
+- Add debug console logging to diagnose Elementor integration
+
+### 1.1.1
+- Fix Elementor timing issue — retry initialization up to 6 seconds to wait for Elementor widgets to render
 
 ### 1.1.0
 - Add Elementor Menu widget compatibility — plugin now detects `#goday-mega-menu` links via JavaScript fallback when the WordPress menu filter doesn't apply
