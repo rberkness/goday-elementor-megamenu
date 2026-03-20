@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.3
+**Version:** 1.3.4
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.4
+- Update "Invite a Friend" link to goday.world/#invite to trigger invite form popup
 
 ### 1.3.3
 - Fix hover flicker — debounce open, only close when mouse leaves the panel (not the trigger)
