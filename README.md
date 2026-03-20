@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -8,7 +8,7 @@ Adds a GO Day mega menu dropdown to any WordPress nav menu item. Works with Elem
 
 ## Installation
 
-1. Download the plugin `.zip` file
+1. Download the versioned `.zip` file (e.g., `goday-mega-menu-1.0.0.zip`)
 2. In WordPress admin, go to **Plugins > Add New > Upload Plugin**
 3. Upload the zip and click **Install Now**
 4. Activate the plugin in **Plugins > Installed Plugins**
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.1.0
+- Add Elementor Menu widget compatibility — plugin now detects `#goday-mega-menu` links via JavaScript fallback when the WordPress menu filter doesn't apply
 
 ### 1.0.0
 - Initial release

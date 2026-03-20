@@ -1,9 +1,9 @@
 /**
  * GO Day Mega Menu — Frontend Interactions
  *
- * Finds the nav menu item marked with .goday-mm-item (via WP filter on
- * items with URL "#goday-mega-menu") and attaches the mega menu panel
- * that is output in wp_footer.
+ * Finds the nav menu item with href "#goday-mega-menu" and attaches the
+ * mega menu panel. Works with standard WordPress menus (via PHP filter)
+ * and Elementor Menu widgets (via JS fallback detection).
  */
 (function () {
 	"use strict";
@@ -86,17 +86,30 @@
 	};
 
 	function init() {
-		// Find the menu <li> that the PHP filter marked with .goday-mm-item
+		// First try the PHP-marked class (standard WP menus)
 		var menuItem = document.querySelector(".goday-mm-item");
-		if (!menuItem) return;
+		var trigger;
 
-		var trigger = menuItem.querySelector("a");
+		if (menuItem) {
+			trigger = menuItem.querySelector("a");
+		} else {
+			// Fallback: find any link pointing to #goday-mega-menu (Elementor, etc.)
+			trigger = document.querySelector('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"]');
+			if (trigger) {
+				menuItem = trigger.closest("li") || trigger.parentElement;
+				menuItem.classList.add("goday-mm-item");
+			}
+		}
+
+		if (!menuItem || !trigger) return;
+
 		var panel = document.getElementById("goday-mm-panel");
 		var overlay = document.getElementById("goday-mm-overlay");
 
-		if (!trigger || !panel) return;
+		if (!panel) return;
 
-		// Prevent the "#" link from scrolling to top
+		// Neutralize the anchor link so it doesn't navigate
+		trigger.setAttribute("href", "#");
 		trigger.addEventListener("click", function (e) {
 			e.preventDefault();
 		});
