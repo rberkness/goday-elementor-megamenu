@@ -107,44 +107,44 @@
 		return null;
 	}
 
-	// --- Mobile: touchstart handler ---
-	// Fires before Elementor's tap/click handlers can intercept.
-	// Immediately redirects to goday.world on mobile.
-	// Uses location.href instead of window.open to avoid Safari popup blocker.
-	var touchHandled = false;
-	document.addEventListener("touchstart", function (e) {
+	// --- Mobile: rewrite href ---
+	// Instead of intercepting events, just change the link's href on mobile
+	// so native browser navigation handles it. Runs periodically to catch
+	// Elementor re-rendering the mobile menu.
+	function rewriteMobileLinks() {
 		if (!isMobile()) return;
-		var link = isGoDayTrigger(e.target);
-		if (!link) return;
-		touchHandled = true;
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		window.location.href = "https://goday.world";
-	}, true); // <-- capture phase
-
-	// Prevent the subsequent click from also firing on mobile
-	document.addEventListener("touchend", function (e) {
-		if (touchHandled) {
-			e.preventDefault();
-			e.stopImmediatePropagation();
-			touchHandled = false;
+		var links = document.querySelectorAll('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"]');
+		for (var i = 0; i < links.length; i++) {
+			links[i].setAttribute("href", "https://goday.world");
+			links[i].removeAttribute("data-focus-index");
+			// Remove Elementor's anchor class so it doesn't intercept
+			var anchorParent = links[i].closest(".e-anchor");
+			if (anchorParent) {
+				anchorParent.classList.remove("e-anchor");
+			}
 		}
-	}, true);
+	}
 
-	// --- Capture-phase click handler ---
-	// Registered on the document IMMEDIATELY so it fires before Elementor's
-	// handlers, even if Elementor hasn't rendered the menu yet.
+	// Run immediately and retry to catch late-rendered Elementor menus
+	function tryRewriteMobile(attempts) {
+		rewriteMobileLinks();
+		if (attempts > 0) {
+			setTimeout(function () { tryRewriteMobile(attempts - 1); }, 500);
+		}
+	}
+
+	// Also rewrite on resize in case viewport crosses the breakpoint
+	window.addEventListener("resize", function () {
+		rewriteMobileLinks();
+	});
+
+	// --- Capture-phase click handler (desktop only) ---
 	document.addEventListener("click", function (e) {
+		if (isMobile()) return; // mobile handled by native href
 		var link = isGoDayTrigger(e.target);
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
-
-		// On mobile, just go to goday.world
-		if (isMobile()) {
-			window.location.href = "https://goday.world";
-			return;
-		}
 
 		// If not yet initialized, try now
 		if (!initialized) init();
@@ -420,8 +420,12 @@
 	}
 
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", function () { tryInit(30); });
+		document.addEventListener("DOMContentLoaded", function () {
+			tryInit(30);
+			tryRewriteMobile(20);
+		});
 	} else {
 		tryInit(30);
+		tryRewriteMobile(20);
 	}
 })();
