@@ -117,10 +117,45 @@ add_action( 'wp_footer', function () {
 			<!-- Column 3: Quick Links -->
 			<div class="goday-mm-col goday-mm-col--3">
 				<div class="goday-mm-links">
-					<button class="goday-mm-link" data-action="calendar" style="--delay: 0.18s">
-						<h4 class="goday-mm-link__title">Set Your Calendar</h4>
-						<p class="goday-mm-link__sub">May 23, 2026</p>
-					</button>
+					<div class="goday-mm-calendar-wrap">
+						<button class="goday-mm-link" data-action="calendar" style="--delay: 0.18s">
+							<h4 class="goday-mm-link__title">Set Your Calendar</h4>
+							<p class="goday-mm-link__sub">May 23, 2026</p>
+						</button>
+						<div class="goday-mm-cal-dropdown" aria-hidden="true">
+							<button class="goday-mm-cal-option" data-calendar="google">
+								<svg viewBox="0 0 24 24" class="goday-mm-cal-icon" fill="none">
+									<path d="M18 3h-1V2h-2v1H9V2H7v1H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H6V8h12v11z" fill="#4285F4"/>
+									<rect x="8" y="10" width="3" height="2" rx="0.5" fill="#EA4335"/>
+									<rect x="13" y="10" width="3" height="2" rx="0.5" fill="#FBBC04"/>
+									<rect x="8" y="14" width="3" height="2" rx="0.5" fill="#34A853"/>
+									<rect x="13" y="14" width="3" height="2" rx="0.5" fill="#4285F4"/>
+								</svg>
+								<span>Google Calendar</span>
+							</button>
+							<button class="goday-mm-cal-option" data-calendar="apple">
+								<svg viewBox="0 0 24 24" class="goday-mm-cal-icon" fill="currentColor">
+									<path d="M17.05 20.28c-.98.95-2.05.8-3.08.36-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.36C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+								</svg>
+								<span>Apple Calendar</span>
+							</button>
+							<button class="goday-mm-cal-option" data-calendar="outlook">
+								<svg viewBox="0 0 24 24" class="goday-mm-cal-icon" fill="none">
+									<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="#0078D4"/>
+									<path d="M12 6c-1.66 0-3 1.57-3 3.5S10.34 13 12 13s3-1.57 3-3.5S13.66 6 12 6zm0 5.5c-.55 0-1-.67-1-1.5s.45-1.5 1-1.5 1 .67 1 1.5-.45 1.5-1 1.5z" fill="white"/>
+									<path d="M7 15h10v1.5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 16.5V15z" fill="white" opacity="0.8"/>
+								</svg>
+								<span>Outlook</span>
+							</button>
+							<button class="goday-mm-cal-option" data-calendar="yahoo">
+								<svg viewBox="0 0 24 24" class="goday-mm-cal-icon" fill="none">
+									<circle cx="12" cy="12" r="10" fill="#6001D2"/>
+									<path d="M7 7l3.5 5.5V17h3v-4.5L17 7h-3l-2 3.5L10 7H7z" fill="white"/>
+								</svg>
+								<span>Yahoo Calendar</span>
+							</button>
+						</div>
+					</div>
 					<a href="https://goday.world" target="_blank" rel="noopener noreferrer"
 					   class="goday-mm-link" style="--delay: 0.24s">
 						<h4 class="goday-mm-link__title">Invite a Friend</h4>

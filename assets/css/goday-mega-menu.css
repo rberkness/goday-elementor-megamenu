@@ -249,6 +249,68 @@ body.goday-mm-is-open .goday-mm-link {
 	line-height: 1.4;
 }
 
+/* ---------- Calendar dropdown ---------- */
+
+.goday-mm-calendar-wrap {
+	position: relative;
+}
+
+.goday-mm-cal-dropdown {
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+	            opacity 0.2s ease-out;
+	background: #fff;
+	border-radius: 10px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	margin: 4px 0 0;
+}
+
+.goday-mm-cal-dropdown[aria-hidden="false"] {
+	max-height: 240px;
+	opacity: 1;
+}
+
+.goday-mm-cal-option {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	width: 100%;
+	padding: 10px 14px;
+	border: none;
+	background: none;
+	font-family: 'Heebo', sans-serif;
+	font-size: 14px;
+	font-weight: 500;
+	color: #374151;
+	cursor: pointer;
+	transition: background-color 0.15s;
+	text-align: left;
+}
+
+.goday-mm-cal-option:hover {
+	background: #f3f4f6;
+}
+
+.goday-mm-cal-option:first-child {
+	border-radius: 10px 10px 0 0;
+}
+
+.goday-mm-cal-option:last-child {
+	border-radius: 0 0 10px 10px;
+}
+
+.goday-mm-cal-option + .goday-mm-cal-option {
+	border-top: 1px solid #f3f4f6;
+}
+
+.goday-mm-cal-icon {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+}
+
 /* ---------- Snippet ---------- */
 
 .goday-mm-snippet {

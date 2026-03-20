@@ -11,7 +11,7 @@
 	var CLOSE_DELAY = 200;
 
 	/**
-	 * Generate and trigger download of an .ics calendar file.
+	 * Generate and trigger download of an .ics calendar file (Apple Calendar).
 	 */
 	function downloadIcs() {
 		var lines = [
@@ -42,6 +42,48 @@
 		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
 	}
+
+	function getGoogleCalendarUrl() {
+		var params = new URLSearchParams({
+			action: "TEMPLATE",
+			text: "GO Day 2026",
+			dates: "20260523/20260524",
+			details: "Share Jesus with One Person — Pentecost Saturday. Learn more at https://goday.world",
+			sf: "true",
+		});
+		return "https://calendar.google.com/calendar/render?" + params;
+	}
+
+	function getOutlookUrl() {
+		var params = new URLSearchParams({
+			subject: "GO Day 2026",
+			startdt: "2026-05-23",
+			enddt: "2026-05-24",
+			body: "Share Jesus with One Person — Pentecost Saturday. Learn more at https://goday.world",
+			allday: "true",
+			path: "/calendar/action/compose",
+		});
+		return "https://outlook.live.com/calendar/0/action/compose?" + params;
+	}
+
+	function getYahooUrl() {
+		var params = new URLSearchParams({
+			v: "60",
+			title: "GO Day 2026",
+			st: "20260523",
+			et: "20260524",
+			desc: "Share Jesus with One Person — Pentecost Saturday. Learn more at https://goday.world",
+			in_loc: "",
+		});
+		return "https://calendar.yahoo.com/?" + params;
+	}
+
+	var calendarActions = {
+		google: function () { window.open(getGoogleCalendarUrl(), "_blank"); },
+		apple: function () { downloadIcs(); },
+		outlook: function () { window.open(getOutlookUrl(), "_blank"); },
+		yahoo: function () { window.open(getYahooUrl(), "_blank"); },
+	};
 
 	function init() {
 		// Find the menu <li> that the PHP filter marked with .goday-mm-item
@@ -163,15 +205,41 @@
 			{ passive: true }
 		);
 
-		// --- Calendar download ---
+		// --- Calendar dropdown ---
 		var calBtn = panel.querySelector('[data-action="calendar"]');
-		if (calBtn) {
+		var calDropdown = panel.querySelector('.goday-mm-cal-dropdown');
+
+		if (calBtn && calDropdown) {
 			calBtn.addEventListener("click", function (e) {
 				e.preventDefault();
-				downloadIcs();
-				close();
+				e.stopPropagation();
+				var isCalOpen = calDropdown.getAttribute("aria-hidden") === "false";
+				calDropdown.setAttribute("aria-hidden", isCalOpen ? "true" : "false");
 			});
+
+			var calOptions = calDropdown.querySelectorAll('.goday-mm-cal-option');
+			for (var j = 0; j < calOptions.length; j++) {
+				calOptions[j].addEventListener("click", function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					var type = this.getAttribute("data-calendar");
+					if (calendarActions[type]) {
+						calendarActions[type]();
+					}
+					calDropdown.setAttribute("aria-hidden", "true");
+					close();
+				});
+			}
 		}
+
+		// Close calendar dropdown when mega menu closes
+		var origClose = close;
+		close = function () {
+			if (calDropdown) {
+				calDropdown.setAttribute("aria-hidden", "true");
+			}
+			origClose();
+		};
 
 		// --- Close panel on link click ---
 		var links = panel.querySelectorAll("a.goday-mm-link");
