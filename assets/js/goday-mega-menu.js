@@ -92,11 +92,14 @@
 		return window.innerWidth <= MOBILE_BREAKPOINT;
 	}
 
+	// Selector that matches the Go Day trigger link in any menu system
+	var TRIGGER_SELECTOR = 'a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"], .goday-mm-item a';
+
 	// --- Capture-phase click handler ---
 	// Registered on the document IMMEDIATELY so it fires before Elementor's
 	// handlers, even if Elementor hasn't rendered the menu yet.
 	document.addEventListener("click", function (e) {
-		var link = e.target.closest('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"], .goday-mm-item a');
+		var link = e.target.closest(TRIGGER_SELECTOR);
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -115,6 +118,32 @@
 		if (isOpen) close();
 		else open();
 	}, true); // <-- capture phase
+
+	// --- Document-level hover handler ---
+	// Uses mouseover/mouseout (which bubble) so it works even if Elementor
+	// re-renders the menu DOM after our init ran.
+	document.addEventListener("mouseover", function (e) {
+		if (isMobile()) return;
+		var link = e.target.closest(TRIGGER_SELECTOR);
+		if (!link) return;
+
+		if (!initialized) init();
+		if (!initialized) return;
+
+		open();
+	});
+
+	document.addEventListener("mouseout", function (e) {
+		if (!isOpen) return;
+		var link = e.target.closest(TRIGGER_SELECTOR);
+		if (!link) return;
+
+		// Check if mouse moved to the panel — if so, don't close
+		var related = e.relatedTarget;
+		if (related && (related.closest && related.closest('#goday-mm-panel'))) return;
+
+		scheduleClose();
+	});
 
 	var panel = null;
 	var overlay = null;

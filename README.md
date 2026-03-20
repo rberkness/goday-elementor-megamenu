@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.0
+**Version:** 1.3.1
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.1
+- Fix hover: use document-level mouseover/mouseout so hover works even after Elementor re-renders menu DOM
 
 ### 1.3.0
 - Mobile: clicking Go Day in hamburger menu navigates directly to goday.world
