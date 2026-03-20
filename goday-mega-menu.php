@@ -3,7 +3,7 @@
  * Plugin Name: GO Day Mega Menu
  * Plugin URI:  https://goday.world
  * Description: Adds a GO Day mega menu dropdown to any WordPress nav menu item. Create a Custom Link menu item with URL "#goday-mega-menu" and the plugin handles the rest.
- * Version:     1.3.6
+ * Version:     1.3.7
  * Author:      PERC Engage
  * Author URI:  https://percengage.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GODAY_MEGA_MENU_VERSION', '1.3.6' );
+define( 'GODAY_MEGA_MENU_VERSION', '1.3.7' );
 define( 'GODAY_MEGA_MENU_URL', plugin_dir_url( __FILE__ ) );
 define( 'GODAY_MEGA_MENU_PATH', plugin_dir_path( __FILE__ ) );
 

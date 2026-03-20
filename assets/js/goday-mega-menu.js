@@ -110,6 +110,7 @@
 	// --- Mobile: touchstart handler ---
 	// Fires before Elementor's tap/click handlers can intercept.
 	// Immediately redirects to goday.world on mobile.
+	// Uses location.href instead of window.open to avoid Safari popup blocker.
 	var touchHandled = false;
 	document.addEventListener("touchstart", function (e) {
 		if (!isMobile()) return;
@@ -118,7 +119,7 @@
 		touchHandled = true;
 		e.preventDefault();
 		e.stopImmediatePropagation();
-		window.open("https://goday.world", "_blank");
+		window.location.href = "https://goday.world";
 	}, true); // <-- capture phase
 
 	// Prevent the subsequent click from also firing on mobile
@@ -141,7 +142,7 @@
 
 		// On mobile, just go to goday.world
 		if (isMobile()) {
-			window.open("https://goday.world", "_blank");
+			window.location.href = "https://goday.world";
 			return;
 		}
 
