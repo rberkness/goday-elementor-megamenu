@@ -95,11 +95,46 @@
 	// Selector that matches the Go Day trigger link in any menu system
 	var TRIGGER_SELECTOR = 'a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"], .goday-mm-item a';
 
+	// Also match by link text for mobile menus where Elementor may re-render
+	function isGoDayTrigger(el) {
+		if (!el) return null;
+		// Direct selector match
+		var link = el.closest(TRIGGER_SELECTOR);
+		if (link) return link;
+		// Fallback: find closest <a> and check if its href contains goday-mega-menu
+		var a = el.closest("a");
+		if (a && a.getAttribute("href") && a.getAttribute("href").indexOf("goday-mega-menu") !== -1) return a;
+		return null;
+	}
+
+	// --- Mobile: touchstart handler ---
+	// Fires before Elementor's tap/click handlers can intercept.
+	// Immediately redirects to goday.world on mobile.
+	var touchHandled = false;
+	document.addEventListener("touchstart", function (e) {
+		if (!isMobile()) return;
+		var link = isGoDayTrigger(e.target);
+		if (!link) return;
+		touchHandled = true;
+		e.preventDefault();
+		e.stopImmediatePropagation();
+		window.open("https://goday.world", "_blank");
+	}, true); // <-- capture phase
+
+	// Prevent the subsequent click from also firing on mobile
+	document.addEventListener("touchend", function (e) {
+		if (touchHandled) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			touchHandled = false;
+		}
+	}, true);
+
 	// --- Capture-phase click handler ---
 	// Registered on the document IMMEDIATELY so it fires before Elementor's
 	// handlers, even if Elementor hasn't rendered the menu yet.
 	document.addEventListener("click", function (e) {
-		var link = e.target.closest(TRIGGER_SELECTOR);
+		var link = isGoDayTrigger(e.target);
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
@@ -128,7 +163,7 @@
 		if (isMobile()) return;
 
 		// Mouse entered the trigger
-		var link = e.target.closest(TRIGGER_SELECTOR);
+		var link = isGoDayTrigger(e.target);
 		if (link) {
 			if (!initialized) init();
 			if (!initialized) return;
@@ -156,10 +191,10 @@
 
 	document.addEventListener("mouseout", function (e) {
 		// Cancel open if mouse leaves trigger before debounce fires
-		var link = e.target.closest(TRIGGER_SELECTOR);
+		var link = isGoDayTrigger(e.target);
 		if (link && hoverOpenTimer) {
 			var related = e.relatedTarget;
-			if (!related || !(related.closest && related.closest(TRIGGER_SELECTOR))) {
+			if (!related || !isGoDayTrigger(related)) {
 				clearTimeout(hoverOpenTimer);
 				hoverOpenTimer = null;
 			}
@@ -172,7 +207,7 @@
 		if (!fromPanel) return;
 
 		var related = e.relatedTarget;
-		if (related && related.closest && related.closest(TRIGGER_SELECTOR)) return;
+		if (related && isGoDayTrigger(related)) return;
 
 		scheduleClose();
 	});

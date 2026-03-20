@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.5
+**Version:** 1.3.6
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.6
+- Fix mobile tap — use touchstart capture to redirect to goday.world before Elementor intercepts
 
 ### 1.3.5
 - Same-site links (Who We Are, News & Stories, Resources) open in same window
