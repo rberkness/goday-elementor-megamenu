@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.4.2
+**Version:** 1.4.3
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.4.3
+- Restore exact v1.4.0 mobile logic that worked on Chrome emulator
 
 ### 1.4.2
 - Fix Safari mobile — use setTimeout to defer navigation outside event handler context

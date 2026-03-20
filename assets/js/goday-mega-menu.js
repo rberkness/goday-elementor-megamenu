@@ -120,15 +120,12 @@
 
 	// --- Capture-phase click handler ---
 	document.addEventListener("click", function (e) {
-		// On mobile: navigate to goday.world
-		// Use setTimeout to break out of Safari's event handler restrictions
+		// On mobile, match by text content (more reliable than href)
 		if (isMobile()) {
 			if (isGoDayByText(e.target) || isGoDayTrigger(e.target)) {
 				e.preventDefault();
 				e.stopImmediatePropagation();
-				setTimeout(function () {
-					window.location.href = "https://goday.world";
-				}, 10);
+				window.location.href = "https://goday.world";
 			}
 			return;
 		}
@@ -147,6 +144,16 @@
 		if (isOpen) close();
 		else open();
 	}, true); // <-- capture phase
+
+	// --- Mobile: also intercept touchend as backup for Safari ---
+	document.addEventListener("touchend", function (e) {
+		if (!isMobile()) return;
+		if (isGoDayByText(e.target) || isGoDayTrigger(e.target)) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			window.location.href = "https://goday.world";
+		}
+	}, true);
 
 	// --- Document-level hover handler ---
 	// Opens on trigger hover. Only closes when mouse leaves the panel.
