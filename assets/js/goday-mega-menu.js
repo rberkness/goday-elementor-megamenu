@@ -86,6 +86,12 @@
 		yahoo: function () { window.open(getYahooUrl(), "_blank"); },
 	};
 
+	var MOBILE_BREAKPOINT = 1024;
+
+	function isMobile() {
+		return window.innerWidth <= MOBILE_BREAKPOINT;
+	}
+
 	// --- Capture-phase click handler ---
 	// Registered on the document IMMEDIATELY so it fires before Elementor's
 	// handlers, even if Elementor hasn't rendered the menu yet.
@@ -94,6 +100,12 @@
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
+
+		// On mobile, just go to goday.world
+		if (isMobile()) {
+			window.open("https://goday.world", "_blank");
+			return;
+		}
 
 		// If not yet initialized, try now
 		if (!initialized) init();

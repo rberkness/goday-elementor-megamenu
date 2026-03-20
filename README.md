@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.2.1
+**Version:** 1.3.0
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,10 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.0
+- Mobile: clicking Go Day in hamburger menu navigates directly to goday.world
+- Desktop: mega menu opens on hover (rollover) with click as backup toggle
 
 ### 1.2.1
 - Link "Come Join Us" card and info section to goday.world
