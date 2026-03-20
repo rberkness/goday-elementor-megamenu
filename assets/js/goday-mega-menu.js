@@ -138,13 +138,18 @@
 		rewriteMobileLinks();
 	});
 
-	// --- Capture-phase click handler (desktop only) ---
+	// --- Capture-phase click handler ---
 	document.addEventListener("click", function (e) {
-		if (isMobile()) return; // mobile handled by native href
 		var link = isGoDayTrigger(e.target);
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
+
+		// On mobile, navigate to goday.world
+		if (isMobile()) {
+			window.location.href = "https://goday.world";
+			return;
+		}
 
 		// If not yet initialized, try now
 		if (!initialized) init();

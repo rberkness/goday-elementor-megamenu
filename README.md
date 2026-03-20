@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.8
+**Version:** 1.3.9
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.9
+- Restore click capture handler for mobile as fallback alongside href rewrite
 
 ### 1.3.8
 - Fix Safari mobile — rewrite link href to goday.world on mobile instead of intercepting events
