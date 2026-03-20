@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.4.1
+**Version:** 1.4.2
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.4.2
+- Fix Safari mobile — use setTimeout to defer navigation outside event handler context
 
 ### 1.4.1
 - Fix Safari mobile — don't call preventDefault, instead change href and let browser navigate natively

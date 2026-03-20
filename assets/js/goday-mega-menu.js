@@ -120,16 +120,15 @@
 
 	// --- Capture-phase click handler ---
 	document.addEventListener("click", function (e) {
-		// On mobile: change the href and let the browser follow naturally.
-		// Do NOT call preventDefault — Safari blocks navigation after that.
+		// On mobile: navigate to goday.world
+		// Use setTimeout to break out of Safari's event handler restrictions
 		if (isMobile()) {
 			if (isGoDayByText(e.target) || isGoDayTrigger(e.target)) {
-				var a = e.target.closest("a");
-				if (a) {
-					a.setAttribute("href", "https://goday.world");
-				}
-				e.stopImmediatePropagation(); // block Elementor
-				// No preventDefault — let browser follow the link
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				setTimeout(function () {
+					window.location.href = "https://goday.world";
+				}, 10);
 			}
 			return;
 		}
