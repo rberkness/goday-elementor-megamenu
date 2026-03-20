@@ -120,13 +120,9 @@
 	}, true); // <-- capture phase
 
 	// --- Document-level hover handler ---
-	// Uses mouseover/mouseout (which bubble) so it works even if Elementor
-	// re-renders the menu DOM after our init ran.
-	// Checks relatedTarget to avoid flicker from child element transitions.
-	function isInsideTriggerOrPanel(el) {
-		if (!el || !el.closest) return false;
-		return !!(el.closest(TRIGGER_SELECTOR) || el.closest('#goday-mm-panel'));
-	}
+	// Opens on trigger hover. Only closes when mouse leaves the panel.
+	// This avoids flicker caused by the panel overlapping the trigger area.
+	var hoverOpenTimer = null;
 
 	document.addEventListener("mouseover", function (e) {
 		if (isMobile()) return;
@@ -137,26 +133,46 @@
 			if (!initialized) init();
 			if (!initialized) return;
 			cancelClose();
-			if (!isOpen) open();
+			// Debounce the open to prevent flicker
+			if (!isOpen && !hoverOpenTimer) {
+				hoverOpenTimer = setTimeout(function () {
+					hoverOpenTimer = null;
+					// Re-check that mouse is still over the trigger
+					open();
+				}, 80);
+			}
 			return;
 		}
 
 		// Mouse entered the panel — cancel any pending close
 		if (e.target.closest('#goday-mm-panel')) {
 			cancelClose();
+			if (hoverOpenTimer) {
+				clearTimeout(hoverOpenTimer);
+				hoverOpenTimer = null;
+			}
 		}
 	});
 
 	document.addEventListener("mouseout", function (e) {
+		// Cancel open if mouse leaves trigger before debounce fires
+		var link = e.target.closest(TRIGGER_SELECTOR);
+		if (link && hoverOpenTimer) {
+			var related = e.relatedTarget;
+			if (!related || !(related.closest && related.closest(TRIGGER_SELECTOR))) {
+				clearTimeout(hoverOpenTimer);
+				hoverOpenTimer = null;
+			}
+		}
+
 		if (!isOpen) return;
 
-		// Only act when leaving the trigger or the panel
-		var fromTrigger = e.target.closest(TRIGGER_SELECTOR);
+		// Only close when leaving the panel to somewhere that isn't the trigger
 		var fromPanel = e.target.closest('#goday-mm-panel');
-		if (!fromTrigger && !fromPanel) return;
+		if (!fromPanel) return;
 
-		// If mouse moved to the trigger or panel, stay open
-		if (isInsideTriggerOrPanel(e.relatedTarget)) return;
+		var related = e.relatedTarget;
+		if (related && related.closest && related.closest(TRIGGER_SELECTOR)) return;
 
 		scheduleClose();
 	});

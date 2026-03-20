@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.2
+**Version:** 1.3.3
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.3
+- Fix hover flicker — debounce open, only close when mouse leaves the panel (not the trigger)
 
 ### 1.3.2
 - Fix hover flicker — check relatedTarget to prevent animation loop when mouse moves between child elements
