@@ -107,49 +107,34 @@
 		return null;
 	}
 
-	// --- Mobile: rewrite href ---
-	// Instead of intercepting events, just change the link's href on mobile
-	// so native browser navigation handles it. Runs periodically to catch
-	// Elementor re-rendering the mobile menu.
-	function rewriteMobileLinks() {
-		if (!isMobile()) return;
-		var links = document.querySelectorAll('a[href="#goday-mega-menu"], a[href*="#goday-mega-menu"]');
-		for (var i = 0; i < links.length; i++) {
-			links[i].setAttribute("href", "https://goday.world");
-			links[i].removeAttribute("data-focus-index");
-			// Remove Elementor's anchor class so it doesn't intercept
-			var anchorParent = links[i].closest(".e-anchor");
-			if (anchorParent) {
-				anchorParent.classList.remove("e-anchor");
-			}
-		}
+	// --- Mobile: match by text content ---
+	// Elementor's mobile hamburger menu may create entirely different DOM
+	// elements, so we match by the "GO Day" text content instead of href.
+	function isGoDayByText(el) {
+		if (!el) return false;
+		var container = el.closest('.e-n-menu-title, .menu-item, [class*="menu-title"]');
+		if (!container) return false;
+		var text = container.textContent.trim();
+		return /^GO\s*Day$/i.test(text);
 	}
-
-	// Run immediately and retry to catch late-rendered Elementor menus
-	function tryRewriteMobile(attempts) {
-		rewriteMobileLinks();
-		if (attempts > 0) {
-			setTimeout(function () { tryRewriteMobile(attempts - 1); }, 500);
-		}
-	}
-
-	// Also rewrite on resize in case viewport crosses the breakpoint
-	window.addEventListener("resize", function () {
-		rewriteMobileLinks();
-	});
 
 	// --- Capture-phase click handler ---
 	document.addEventListener("click", function (e) {
+		// On mobile, match by text content (more reliable than href)
+		if (isMobile()) {
+			if (isGoDayByText(e.target) || isGoDayTrigger(e.target)) {
+				e.preventDefault();
+				e.stopImmediatePropagation();
+				window.location.href = "https://goday.world";
+			}
+			return;
+		}
+
+		// Desktop: match by href/class
 		var link = isGoDayTrigger(e.target);
 		if (!link) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
-
-		// On mobile, navigate to goday.world
-		if (isMobile()) {
-			window.location.href = "https://goday.world";
-			return;
-		}
 
 		// If not yet initialized, try now
 		if (!initialized) init();
@@ -159,6 +144,16 @@
 		if (isOpen) close();
 		else open();
 	}, true); // <-- capture phase
+
+	// --- Mobile: also intercept touchend as backup for Safari ---
+	document.addEventListener("touchend", function (e) {
+		if (!isMobile()) return;
+		if (isGoDayByText(e.target) || isGoDayTrigger(e.target)) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			window.location.href = "https://goday.world";
+		}
+	}, true);
 
 	// --- Document-level hover handler ---
 	// Opens on trigger hover. Only closes when mouse leaves the panel.
@@ -425,12 +420,8 @@
 	}
 
 	if (document.readyState === "loading") {
-		document.addEventListener("DOMContentLoaded", function () {
-			tryInit(30);
-			tryRewriteMobile(20);
-		});
+		document.addEventListener("DOMContentLoaded", function () { tryInit(30); });
 	} else {
 		tryInit(30);
-		tryRewriteMobile(20);
 	}
 })();
