@@ -3,7 +3,7 @@
  * Plugin Name: GO Day Mega Menu
  * Plugin URI:  https://goday.world
  * Description: Adds a GO Day mega menu dropdown to any WordPress nav menu item. Create a Custom Link menu item with URL "#goday-mega-menu" and the plugin handles the rest.
- * Version:     1.3.4
+ * Version:     1.3.5
  * Author:      PERC Engage
  * Author URI:  https://percengage.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GODAY_MEGA_MENU_VERSION', '1.3.4' );
+define( 'GODAY_MEGA_MENU_VERSION', '1.3.5' );
 define( 'GODAY_MEGA_MENU_URL', plugin_dir_url( __FILE__ ) );
 define( 'GODAY_MEGA_MENU_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -161,17 +161,17 @@ add_action( 'wp_footer', function () {
 						<h4 class="goday-mm-link__title">Invite a Friend</h4>
 						<p class="goday-mm-link__sub">Bring several if you can</p>
 					</a>
-					<a href="https://gomovement.world/who-we-are" target="_blank" rel="noopener noreferrer"
+					<a href="https://gomovement.world/who-we-are"
 					   class="goday-mm-link" style="--delay: 0.3s">
 						<h4 class="goday-mm-link__title">Who We Are</h4>
 						<p class="goday-mm-link__sub">Mobilizing Christians to share their faith globally</p>
 					</a>
-					<a href="https://gomovement.world/news-stories" target="_blank" rel="noopener noreferrer"
+					<a href="https://gomovement.world/news-stories"
 					   class="goday-mm-link" style="--delay: 0.36s">
 						<h4 class="goday-mm-link__title">News &amp; Stories</h4>
 						<p class="goday-mm-link__sub">Testimonies and updates from around the world</p>
 					</a>
-					<a href="https://gomovement.world/resources" target="_blank" rel="noopener noreferrer"
+					<a href="https://gomovement.world/resources"
 					   class="goday-mm-link" style="--delay: 0.42s">
 						<h4 class="goday-mm-link__title">Resources</h4>
 						<p class="goday-mm-link__sub">Tools and guides to help you share your faith</p>

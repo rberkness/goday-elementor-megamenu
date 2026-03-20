@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.3.4
+**Version:** 1.3.5
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,10 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.3.5
+- Same-site links (Who We Are, News & Stories, Resources) open in same window
+- External links (goday.world) continue to open in new tab
 
 ### 1.3.4
 - Update "Invite a Friend" link to goday.world/#invite to trigger invite form popup
