@@ -101,6 +101,13 @@ body.goday-mm-is-open .goday-mm-divider {
 
 /* ---------- Image cards ---------- */
 
+a.goday-mm-card,
+a.goday-mm-info {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+}
+
 .goday-mm-card {
 	position: relative;
 	border-radius: 16px;
@@ -331,6 +338,16 @@ body.goday-mm-is-open .goday-mm-snippet {
 	color: #6b7280;
 	line-height: 1.6;
 	margin: 0;
+}
+
+.goday-mm-snippet a {
+	color: #D90000;
+	text-decoration: none;
+	font-weight: 700;
+}
+
+.goday-mm-snippet a:hover {
+	text-decoration: underline;
 }
 
 /* ==========================================================================

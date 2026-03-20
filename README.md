@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.2.0
+**Version:** 1.2.1
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,10 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.2.1
+- Link "Come Join Us" card and info section to goday.world
+- Link "GO Day" in the bottom snippet text to goday.world
 
 ### 1.2.0
 - Rewrite JS to use capture-phase click handler — intercepts clicks before Elementor's anchor handling
