@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.4.0
+**Version:** 1.4.1
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.4.1
+- Fix Safari mobile — don't call preventDefault, instead change href and let browser navigate natively
 
 ### 1.4.0
 - Rewrite mobile detection — match by "GO Day" text content instead of href to catch Elementor's re-rendered mobile menu elements
