@@ -3,7 +3,7 @@
  * Plugin Name: GO Day Mega Menu
  * Plugin URI:  https://goday.world
  * Description: Adds a GO Day mega menu dropdown to any WordPress nav menu item. Create a Custom Link menu item with URL "#goday-mega-menu" and the plugin handles the rest.
- * Version:     1.4.3
+ * Version:     1.4.4
  * Author:      PERC Engage
  * Author URI:  https://percengage.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GODAY_MEGA_MENU_VERSION', '1.4.3' );
+define( 'GODAY_MEGA_MENU_VERSION', '1.4.4' );
 define( 'GODAY_MEGA_MENU_URL', plugin_dir_url( __FILE__ ) );
 define( 'GODAY_MEGA_MENU_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -83,7 +83,7 @@ add_action( 'wp_footer', function () {
 					<?php goday_mega_menu_render_logo(); ?>
 					<p class="goday-mm-info__headline">Share Jesus with One Person</p>
 					<p class="goday-mm-info__date">
-						<span class="goday-mm-info__red">Pentecost Saturday</span> &ndash; Saturday, May 23, 2026
+						<span class="goday-mm-info__red">Pentecost Saturday</span> &ndash; May 23, 2026
 					</p>
 				</a>
 			</div>
@@ -93,7 +93,7 @@ add_action( 'wp_footer', function () {
 
 			<!-- Column 2: Leaders & Pastors -->
 			<div class="goday-mm-col goday-mm-col--2">
-				<div class="goday-mm-card" style="--delay: 0.12s">
+				<a href="https://goday.world/pastors" target="_blank" rel="noopener noreferrer" class="goday-mm-card" style="--delay: 0.12s">
 					<img src="<?php echo $img_base; ?>youth-leader.jpg"
 					     alt="Leaders and Pastors"
 					     class="goday-mm-card__img"
@@ -103,12 +103,11 @@ add_action( 'wp_footer', function () {
 						<h3 class="goday-mm-card__title">Leaders &amp; Pastors</h3>
 						<p class="goday-mm-card__sub">We Want to Support You</p>
 					</div>
-				</div>
-				<div class="goday-mm-info" style="--delay: 0.28s">
+				</a>
+				<a href="https://goday.world/pastors" target="_blank" rel="noopener noreferrer" class="goday-mm-info" style="--delay: 0.28s">
 					<?php goday_mega_menu_render_logo(); ?>
 					<p class="goday-mm-info__headline">Leaders &amp; Pastors</p>
-					<p class="goday-mm-info__soon">Coming soon</p>
-				</div>
+				</a>
 			</div>
 
 			<!-- Divider 2 -->

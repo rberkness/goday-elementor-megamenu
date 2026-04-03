@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.4.3
+**Version:** 1.4.4
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -37,7 +37,7 @@ That's it. The plugin automatically detects that menu item and attaches the mega
 
 - **3-column mega menu** with animated unfurl:
   - "Come Join Us" image card with GO Day info
-  - "Leaders & Pastors" image card (coming soon)
+  - "Leaders & Pastors" image card linking to goday.world/pastors
   - Quick links: Set Your Calendar, Invite a Friend, Who We Are, News & Stories, Resources
 - **Calendar provider dropdown** — "Set Your Calendar" opens a dropdown with options for Google Calendar, Apple Calendar, Outlook, and Yahoo Calendar
 - **Hover + click** interaction with 200ms close delay
@@ -56,6 +56,10 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.4.4
+- Link "Leaders & Pastors" column to goday.world/pastors (no longer "Coming soon")
+- Remove redundant "Saturday," from date line (now reads "Pentecost Saturday – May 23, 2026")
 
 ### 1.4.3
 - Restore exact v1.4.0 mobile logic that worked on Chrome emulator
