@@ -1,6 +1,6 @@
 # GO Day Mega Menu — WordPress Plugin
 
-**Version:** 1.4.4
+**Version:** 1.4.5
 **Author:** PERC Engage
 **Support:** [percengage.com](https://percengage.com)
 
@@ -56,6 +56,9 @@ This plugin is built and maintained by **PERC Engage**. For questions, support, 
 ---
 
 ## Changelog
+
+### 1.4.5
+- Replace Leaders & Pastors card image with pastors page hero (resized to 600px, converted to WebP — 19KB)
 
 ### 1.4.4
 - Link "Leaders & Pastors" column to goday.world/pastors (no longer "Coming soon")
